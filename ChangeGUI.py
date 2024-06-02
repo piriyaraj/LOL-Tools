@@ -18,7 +18,7 @@ def start_game():
     while True:
         screenshot = ImageGrab.grab()  # Take a screenshot of the entire screen
         # Find the target image on the screenshot
-        result = pyautogui.locateOnScreen(target_image, confidence=0.64)
+        result = pyautogui.locateOnScreen(target_image, confidence=0.60)
 
         if result is not None:
             # Get the center of the found image
