@@ -15,7 +15,6 @@ if exist requirements.txt (
     pip install -r requirements.txt > NUL 2>&1
 )
 
-Echo Waiting for Game open...
 REM Run the Python script
 python ShortsMaker.py
 REM python test.py
