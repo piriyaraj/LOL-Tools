@@ -33,7 +33,6 @@ def start_game():
 
 
 def record():
-    start_game()
     screen_width, screen_height = pydirectinput.size()
     # Calculate the center of the screen
     center_x = int(screen_width / 2)
@@ -65,15 +64,11 @@ def record():
     pydirectinput.keyUp('z')
     # Move mouse pointer down 5 times
     pyautogui.scroll(-400)
+    print("Finished")
 
+import keyboard
+# Register the hotkey
+keyboard.add_hotkey('shift+a', record)
 
-while True:
-    target_window_title = "league of legends (TM) client"
-    open_windows = gw.getWindowsWithTitle(target_window_title)
-    if open_windows:
-        try:
-            record()
-            break
-        except:
-            pass
-    time.sleep(10)
+# Keep the program running
+keyboard.wait('esc')  # Press 'esc' to exit the programnouc
