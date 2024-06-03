@@ -15,7 +15,6 @@ class ScrapLolData(DataScrapper):
         self.total = 100
         # URL
         print_progress(0, self.total, prefix='Scraping Gameplay :')
-        self.__replay_file_dir = os.path.abspath(r'.\media\replays')
         # self.__url = 'https://www.leagueofgraphs.com/replays/all'
         self.__url = 'https://www.leagueofgraphs.com/match/kr/7089343746'
 
@@ -33,10 +32,10 @@ class ScrapLolData(DataScrapper):
             }
         }
 
-    def get_match_data_and_download_replay(self) -> None:
+    def get_match_data_and_download_replay(self,match_url) -> None:
         # print('staring get data and donwload replay...')
         print_progress(1, self.total, prefix='Scraping Gameplay :')
-        self.driver.get(self.__url)
+        self.driver.get(match_url)
         print_progress(10, self.total, prefix='Scraping Gameplay :')
         table = self.driver.find_element(
             by=By.XPATH, value=self.__match_table_selector)
@@ -60,8 +59,8 @@ class ScrapLolData(DataScrapper):
         self.match_data['team2']['players'] = self.__create_team_two(
             text_list=text_list, champions=champions)
         mvp_data = self.__get_mvp_data(self.match_data)
-        print(self.match_data)
-        print(mvp_data)
+        # print(self.match_data)
+        # print(mvp_data)
         self.match_data[mvp_data['loser_team']]['players'][mvp_data['player_index']]['champion']
 
         print_progress(40, self.total, prefix='Scraping Gameplay :')
@@ -83,13 +82,13 @@ class ScrapLolData(DataScrapper):
         # print('saved information')
         # print('Starting game download')
 
-        self.__remove_match()
+        # self.__remove_match()
         print_progress(85, self.total, prefix='Scraping Gameplay :')
-        self.__download_match()
+        # self.__download_match()
         print_progress(99, self.total, prefix='Scraping Gameplay :')
-        self.quit()
         print_progress(100, self.total, prefix='Scraping Gameplay :')
-
+        return self.driver
+    
     def __get_champions_names(self, elements: list) -> list[str]:
         champions = []
         for i in range(0, 38):
@@ -253,6 +252,7 @@ class ScrapLolData(DataScrapper):
                 json_string = json_string[:-1]
         # If no valid JSON could be produced
         raise ValueError("Cannot fix the JSON string, it's too corrupted.")
+    
     def __create_team_two(self, text_list: list, champions: list) -> list[Player]:
         team_two = []
         # print("====team y======")
@@ -272,7 +272,7 @@ class ScrapLolData(DataScrapper):
             try:
                 newTooltipData = json.loads(newTooltipData_str)
             except:
-                newTooltipData_str = newTooltipData_str+'"}'
+                newTooltipData_str = newTooltipData_str+'}'
                 try:
                     newTooltipData = json.loads(newTooltipData_str)
                 except:

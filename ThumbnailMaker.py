@@ -12,28 +12,52 @@ from bs4 import BeautifulSoup
 
 from scrap_lol_data import ScrapLolData
 
+def change_champion_name(champion):
+    champion = champion.replace("'", "& ")
+    champion = champion.replace("&", "")
+    if (len(champion.split()) == 2):
+        champion = champion.replace(" ", "-")
+    
+    champion = champion.replace(" ", "").lower()
+
+    return champion
+
+def iconReplace(champion):
+    name = champion.replace(" ","")
+    if (name == "KaiSa"):
+        return "Kaisa"
+    elif (name == "VelKoz"):
+        return "Velkoz"
+    elif (name == "KhaZix"):
+        return "Khazix"
+    elif (name == "NunuWillump"):
+        return "Nunu"
+    elif (name == "BelVeth"):
+        return "Belveth"
+    elif (name == "RenataGlasc"):
+        return "Renata"
+    elif (name == "RekSai"):
+        return "RekSai"
+    elif (name == "Wukong"):
+        return "MonkeyKing"
+    elif (name == "Dr.Mundo"):
+        return "DrMundo"
+    else:
+        return name
 
 class CreateThumbnail:
-    def __init__(self, data_scrapper: DataScrapper, data: MatchData) -> None:
-        self.scrapper = data_scrapper
+    def __init__(self, driver, data: MatchData) -> None:
+        self.driver = driver
         self.lol_data = data
-        self.__thumb_path = os.path.abspath(r'.\media\thumb\thumb.png')
-        self.__replay_file_dir = os.path.abspath(r'.\media\replays')
-
-        self.__static_thumb_path = os.path.join(
-            os.path.abspath(r'.\media\AllThumbs'), f'test.png')
-        self.total = 100
-        print_progress(1, self.total, prefix='Creating Thumbnail:')
+        self.__thumb_path = os.path.abspath(r'../media/thumb/thumb.png')
+        os.makedirs('../media/thumb', exist_ok=True)
+        print_progress(1, 100, prefix='Creating Thumbnail:')
         self.skins = {
             "Yuumi": [0, 1, 11, 19, 28, 37, 39],
         }
-        os.makedirs(r'./media/thumb', exist_ok=True)
 
     def exceptionHandle(self, name):
-        # print(name)
-        if(name == "AurelionSol"):
-            return "aurelion-sol"
-        elif (name == "KaiSa"):
+        if (name == "KaiSa"):
             return "Kai-sa"
         elif (name == "VelKoz"):
             return "vel-koz"
@@ -65,6 +89,8 @@ class CreateThumbnail:
             return "dr-mundo"
         elif (name == "Nidalee"):
             return "nidalee"
+        elif (name == "Evelynn"):
+            return "evelynn"
         else:
             return name
 
@@ -109,18 +135,14 @@ class CreateThumbnail:
         return filtered_urls
 
     def create_thumbnail(self):
-        print_progress(5, self.total, prefix='Creating Thumbnail:')
+        print_progress(5, 100, prefix='Creating Thumbnail:')
         champion = self.lol_data['mvp']['champion']
         championRaw = champion
-        champion = champion.replace("'", "& ")
-        champion = champion.replace("&", "")
-        if (len(champion.split()) == 1):
-            champion = champion.capitalize()
-        champion = champion.replace(" ", "")
+        champion = change_champion_name(champion)
 
         championTemp = champion
         champion = self.exceptionHandle(champion)
-        print_progress(8, self.total, prefix='Creating Thumbnail:')
+        print_progress(8, 100, prefix='Creating Thumbnail:')
         # if champion=="KaiSa":
         #     champion=="Kaisa"
         rank = self.lol_data['mvp']['rank']
@@ -135,17 +157,17 @@ class CreateThumbnail:
             "GrandMaster": "https://lolg-cdn.porofessor.gg/img/s/league-icons-v3/160/8.png",
             "Challenger": "https://lolg-cdn.porofessor.gg/img/s/league-icons-v3/160/9.png"
         }
-        print_progress(12, self.total, prefix='Creating Thumbnail:')
+        print_progress(12, 100, prefix='Creating Thumbnail:')
         rankIcon = ranks.get(rank)
         if (rankIcon is None):
             rankIcon = "https://lolg-cdn.porofessor.gg/img/s/league-icons-v3/160/9.png"
         spellImgs = os.listdir("assets/img/spell")
-        print_progress(19, self.total, prefix='Creating Thumbnail:')
+        print_progress(19, 100, prefix='Creating Thumbnail:')
         spellImg = random.sample(spellImgs, 3)
         spellImgNew = self.lol_data['mvp']['spell']
         spellImgNew = [s+'.png' for s in spellImgNew]
         spellImg = spellImgNew
-        print_progress(25, self.total, prefix='Creating Thumbnail:')
+        print_progress(25, 100, prefix='Creating Thumbnail:')
 
         loser = self.lol_data['loser']
         imgUrl = ""
@@ -156,7 +178,7 @@ class CreateThumbnail:
             region = self.lol_data['region']
         else:
             region = "EUW"
-        print(champion)
+        # print(champion)
         skins = self.getSkin(champion)
         # print(skins)
         if (len(skins) == 0):
@@ -168,9 +190,9 @@ class CreateThumbnail:
             return False
         imgUrl = random.choice(skins)
 
-        print_progress(40, self.total, prefix='Creating Thumbnail:')
-        oppIconImg = self.iconReplace(championTemp.replace(" ", ""))
-        loserIcon = self.iconReplace(loser.replace(" ", ""))
+        print_progress(40, 100, prefix='Creating Thumbnail:')
+        oppIconImg = iconReplace(championRaw)
+        loserIcon = self.iconReplace(loser)
         self.__create_html(
             kda=self.lol_data['mvp']['kda'].split("/"),
             imgUrl=imgUrl,
@@ -184,25 +206,25 @@ class CreateThumbnail:
             region=region,
             loserIcon=f'https://opgg-static.akamaized.net/meta/images/lol/champion/{loserIcon}.png',
         )
-        print_progress(50, self.total, prefix='Creating Thumbnail:')
+        print_progress(50, 100, prefix='Creating Thumbnail:')
         html_path = os.path.abspath('assets/thumbnail.html')
-        self.scrapper.driver.get('file://' + html_path)
+        self.driver.get('file://' + html_path)
         timer = 51
         for i in range(10):
             sleep(0.5)
-            print_progress(timer+i*2, self.total, prefix='Creating Thumbnail:')
-        self.scrapper.driver.set_window_size(1280, 805)
-        print_progress(81, self.total, prefix='Creating Thumbnail:')
-        screenshot = self.scrapper.driver.get_screenshot_as_png()
-        print_progress(91, self.total, prefix='Creating Thumbnail:')
+            print_progress(timer+i*2, 100, prefix='Creating Thumbnail:')
+        self.driver.set_window_size(1280, 805)
+        print_progress(81, 100, prefix='Creating Thumbnail:')
+        screenshot = self.driver.get_screenshot_as_png()
+        print_progress(91, 100, prefix='Creating Thumbnail:')
         with Image.open(BytesIO(screenshot)) as img:
             img = img.convert('RGB')
             img = img.resize((1280, 720))
             img.save(self.__thumb_path, quality=70)
             # img.save(self.__static_thumb_path, quality=70)
-        print_progress(100, self.total, prefix='Creating Thumbnail:')
+        print_progress(100, 100, prefix='Creating Thumbnail:')
 
-        self.scrapper.driver.quit()
+        self.driver.quit()
         return True
 
     def __create_html(self, kda: str, mvp: str, vs: str, rank: str, patch: str, imgUrl: str, rankIcon: str, spellImg: list, opponentIcon: str, region, loserIcon):
@@ -247,12 +269,57 @@ class CreateThumbnail:
         with open("./assets/thumbnail.html", "w", encoding='utf-8') as f:
             f.write(HTML)
 
-
-if __name__ == "__main__":
+def test(link_list):
+    for match_url in link_list:
+        lol_data_scrapper = ScrapLolData()
+        driver = lol_data_scrapper.get_match_data_and_download_replay(match_url)
+        from data import load
+        lol_data: MatchData = load()
+        thumb_creator = CreateThumbnail(driver, data=lol_data)
+        thumb_creator.create_thumbnail()
+        driver.quit()
+    
+def run():
+    match_url = input("Enter Match URL: ")
     lol_data_scrapper = ScrapLolData()
-    lol_data_scrapper.get_match_data_and_download_replay()
+    driver = lol_data_scrapper.get_match_data_and_download_replay(match_url)
     from data import load
     lol_data: MatchData = load()
-    thumb_creator = CreateThumbnail(
-        data_scrapper=DataScrapper(), data=lol_data)
+    thumb_creator = CreateThumbnail(driver, data=lol_data)
     thumb_creator.create_thumbnail()
+    driver.quit()
+    
+link_list = [
+    # 'https://www.leagueofgraphs.com/match/na/5011563933',
+    # 'https://www.leagueofgraphs.com/match/br/2946190822',
+    'https://www.leagueofgraphs.com/match/euw/6961124219',
+    # 'https://www.leagueofgraphs.com/match/na/5011537333',
+    # 'https://www.leagueofgraphs.com/match/na/5011534961',
+    # 'https://www.leagueofgraphs.com/match/br/2946173053'
+]
+
+    
+def getSkin(name):
+    # url = "https://www.leagueoflegends.com/en-gb/champions/{name}/"
+    # make get request and use beautifulsoup and find the skin img urls
+    url = "https://www.leagueoflegends.com/en-gb/champions/{}/".format(
+        name)
+    # print(url)
+    r = requests.get(url)
+    # if r.status_code is '404':
+    #     url = "https://www.leagueoflegends.com/en-pl/champions/{}/".format(name)
+    #     r = requests.get(url)
+    soup = BeautifulSoup(r.text, 'html.parser')
+    skinsImgTag = soup.find_all('img')
+    skinsUrls = list(set([skin.get('src') for skin in skinsImgTag]))
+    filtered_urls = [
+        skinUrl for skinUrl in skinsUrls if skinUrl is not None and "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/" in skinUrl]
+    
+    return filtered_urls
+
+
+def get_icon(champion):
+    print(f'https://opgg-static.akamaized.net/meta/images/lol/champion/{champion}.png')
+    
+if __name__ == "__main__":
+    run()

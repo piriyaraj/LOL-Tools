@@ -41,7 +41,6 @@ class ShortVideoMaker:
             return str(e)
 
 
-# Example usage
 if __name__ == "__main__":
     input_video_path = r"D:\Bots\LOL Heaven X\media\uploaded\test.mp4"
     input_video_path = input("Enter video path: ")
