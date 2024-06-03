@@ -1,3 +1,5 @@
+import datetime
+import shutil
 from moviepy.editor import VideoFileClip, vfx
 import os
 from moviepy.video.fx.all import crop
@@ -28,7 +30,12 @@ class ShortVideoMaker:
                 output_clip = crop(output_clip, x1=x1, y1=y1, x2=x2, y2=y2)
                 output_clip = output_clip.fx(vfx.speedx, 1.5)
                 # Write the final video to the specified output path
-                output_video_path = "../media/shorts/short_video.mp4"
+                current_datetime = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+                # Construct the new filename with the current date and time
+                new_video_filename = f"short_video_{current_datetime}.mp4"
+                output_video_path = f"../media/shorts/{new_video_filename}"
+                # output_video_path = "../media/shorts/short_video.mp4"
                 output_clip.write_videofile(
                     output_video_path, codec='libx264', threads=10, preset='ultrafast')
                 input_clip.close()  # Explicitly close the input clip
