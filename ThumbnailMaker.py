@@ -192,7 +192,7 @@ class CreateThumbnail:
 
         print_progress(40, 100, prefix='Creating Thumbnail:')
         oppIconImg = iconReplace(championRaw)
-        loserIcon = self.iconReplace(loser)
+        loserIcon = iconReplace(loser)
         self.__create_html(
             kda=self.lol_data['mvp']['kda'].split("/"),
             imgUrl=imgUrl,
