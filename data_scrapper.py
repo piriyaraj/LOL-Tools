@@ -14,7 +14,7 @@ class DataScrapper:
         self.__options.add_argument('--headless')
         self.driver = webdriver.Firefox(service=FirefoxService(
             GeckoDriverManager().install()), options=self.__options)
-        self.driver.maximize_window()
+        self.driver.minimize_window()
 
 
 

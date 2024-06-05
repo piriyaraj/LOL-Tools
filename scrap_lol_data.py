@@ -31,7 +31,9 @@ class ScrapLolData(DataScrapper):
                 "players": []
             }
         }
-
+    def get_driver(self):
+        return self.driver
+    
     def get_match_data_and_download_replay(self,match_url) -> None:
         # print('staring get data and donwload replay...')
         print_progress(1, self.total, prefix='Scraping Gameplay :')

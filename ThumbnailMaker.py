@@ -51,7 +51,7 @@ class CreateThumbnail:
         self.lol_data = data
         self.__thumb_path = os.path.abspath(r'../media/thumb/thumb.png')
         os.makedirs('../media/thumb', exist_ok=True)
-        print_progress(1, 100, prefix='Creating Thumbnail:')
+        # print_progress(1, 100, prefix='Creating Thumbnail:')
         self.skins = {
             "Yuumi": [0, 1, 11, 19, 28, 37, 39],
         }
@@ -133,10 +133,22 @@ class CreateThumbnail:
             skinUrl for skinUrl in skinsUrls if skinUrl is not None and "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/" in skinUrl]
         
         return filtered_urls
-
+    def all_champion(self):
+        champions = []
+        for player in self.lol_data['team1']['players']:
+            champions.append(player['champion'])
+        for player in self.lol_data['team2']['players']:
+            champions.append(player['champion'])
+        
+        for index, player in enumerate(champions):
+            print(f"{index} : {player}")
+        
+        return champions[int(input("Enter the players number:"))]
     def create_thumbnail(self):
+        champion = self.all_champion()
+        # exit()
         print_progress(5, 100, prefix='Creating Thumbnail:')
-        champion = self.lol_data['mvp']['champion']
+        # champion = self.lol_data['mvp']['champion']
         championRaw = champion
         champion = change_champion_name(champion)
 
@@ -193,6 +205,7 @@ class CreateThumbnail:
         print_progress(40, 100, prefix='Creating Thumbnail:')
         oppIconImg = iconReplace(championRaw)
         loserIcon = iconReplace(loser)
+        # print(f"https://opgg-static.akamaized.net/meta/images/lol/14.11.1/champion/{loserIcon}.png'")
         self.__create_html(
             kda=self.lol_data['mvp']['kda'].split("/"),
             imgUrl=imgUrl,
@@ -202,9 +215,9 @@ class CreateThumbnail:
             patch=self.lol_data['patch'],
             rankIcon=rankIcon,
             spellImg=spellImg,
-            opponentIcon=f'https://opgg-static.akamaized.net/meta/images/lol/champion/{oppIconImg}.png',
+            opponentIcon=f'https://opgg-static.akamaized.net/meta/images/lol/14.11.1/champion/{oppIconImg}.png',
             region=region,
-            loserIcon=f'https://opgg-static.akamaized.net/meta/images/lol/champion/{loserIcon}.png',
+            loserIcon=f'https://opgg-static.akamaized.net/meta/images/lol/14.11.1/champion/{loserIcon}.png',
         )
         print_progress(50, 100, prefix='Creating Thumbnail:')
         html_path = os.path.abspath('assets/thumbnail.html')
@@ -248,7 +261,7 @@ class CreateThumbnail:
         if none_vars:
             # print(f"One or more arguments are None: {', '.join(none_vars)}")
             return
-        with open("./assets/template.html", "r", encoding='utf-8') as f:
+        with open("./assets/template_new.html", "r", encoding='utf-8') as f:
             HTML = f.read()
             # print(HTML)
         HTML = HTML.replace("backgroundImageLOL", imgUrl.replace("'", ""))
@@ -282,6 +295,7 @@ def test(link_list):
 def run():
     match_url = input("Enter Match URL: ")
     lol_data_scrapper = ScrapLolData()
+    driver = lol_data_scrapper.get_driver()
     driver = lol_data_scrapper.get_match_data_and_download_replay(match_url)
     from data import load
     lol_data: MatchData = load()
