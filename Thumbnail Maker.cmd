@@ -8,11 +8,11 @@ if not exist LOL-Tools (
 )
 cd LOL-Tools
 
-@REM call git restore .
+call git restore .
 call git pull > NUL 2>&1
-call git add .
-call git commit -m "LOL-Tools updated"
-call git push
+@REM call git add .
+@REM call git commit -m "LOL-Tools updated"
+@REM call git push
 
 
 if exist requirements.txt (
@@ -22,7 +22,7 @@ if exist requirements.txt (
 REM Run the Python script
 python ThumbnailMaker.py
 REM python test.py
-call git add .
-call git commit -m "LOL-Tools updated"
-call git push
-call git pull > NUL 2>&1
+@REM call git add .
+@REM call git commit -m "LOL-Tools updated"
+@REM call git push
+@REM call git pull > NUL 2>&1
