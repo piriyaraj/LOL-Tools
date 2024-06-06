@@ -257,33 +257,24 @@ class ScrapLolData(DataScrapper):
     
     def __create_team_two(self, text_list: list, champions: list) -> list[Player]:
         team_two = []
-        # print("====team y======")
         toolTips = self.driver.find_element(
             by=By.XPATH, value="//*[@id='mainContent']/script")
-        newTooltipData_str = toolTips.get_attribute(
-            'innerHTML').split("newTooltipData =")[1].split(";if")[0]
-        # print(newTooltipData_str)
+        script_content = toolTips.get_attribute('innerHTML')
 
-        # convert the string to a dictionary
-        try:
-            newTooltipData = json.loads(newTooltipData_str)
-        except Exception as e:
-            # print(e)
-            newTooltipData_str = newTooltipData_str.split("}")[0]
-            newTooltipData_str = "".join(newTooltipData_str)
+        # Use regular expression to find the newTooltipData JavaScript object
+        pattern = re.compile(r"newTooltipData\s*=\s*({.*?});", re.DOTALL)
+        match = pattern.search(script_content)
+
+        if match:
+            newTooltipData_str = match.group(1)
             try:
+                # Convert the string to a JSON object
                 newTooltipData = json.loads(newTooltipData_str)
-            except:
-                newTooltipData_str = newTooltipData_str+'}'
-                try:
-                    newTooltipData = json.loads(newTooltipData_str)
-                except:
-                    with open('new_tooltip_data.json', 'w') as f:
-                        f.write(newTooltipData_str)
-                    print("Check after sometime")
-                    return
-        with open('new_tooltip_data.json', 'w') as f:
-            f.write(newTooltipData_str)
+            except json.JSONDecodeError as e:
+                print(f"Error decoding JSON: {e}")
+        else:
+            print("newTooltipData not found in the script.")
+
         common = self.driver.find_element(
             by=By.XPATH, value="//*[@id='mainContent']/div/div/div/div/div/table/tbody/tr[2]/td[6]/div/div[2]")
 
