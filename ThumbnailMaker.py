@@ -24,7 +24,7 @@ def change_champion_name(champion):
 
 def iconReplace(champion):
     name = champion.replace(" ","")
-    name = champion.replace("'","")
+    name = name.replace("'","")
     if (name == "KaiSa"):
         return "Kaisa"
     elif (name == "VelKoz"):
