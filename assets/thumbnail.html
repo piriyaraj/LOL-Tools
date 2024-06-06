@@ -12,7 +12,7 @@
             font-family: 'Nanum Gothic', sans-serif;
         }
         .container {
-            background-image: url('https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Diana_2.jpg');
+            background-image: url('https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Nidalee_39.jpg');
             background-size: cover;
             width: 1280px;
             height: 720px;
@@ -143,6 +143,27 @@
                 position: absolute;
                 bottom: 61px;
             }
+            .banner{
+                width: 544px;
+                height: 150px;
+                background-color: rgba(0, 0, 0, 0.6);
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                margin: 120px;
+                bottom: 25px;
+                margin-bottom: -398px;
+            }
+            .position {
+                color: wheat;
+                font-size: 125px;
+                font-family: emoji;
+                font-weight: 600;
+                padding: 10px;}
+            .banner .players1{
+                width: 125px;
+                height: 125px;
+            }
     </style>
 </head>
 <body>
@@ -150,34 +171,38 @@
         <div class="frame">
             <div class="mainplayers">
                 <img class="players1" src='https://lolg-cdn.porofessor.gg/img/s/league-icons-v3/160/9.png'>
-                <img class="players1" src='https://opgg-static.akamaized.net/meta/images/lol/14.11.1/champion/Diana.png'/>
+                <img class="players1" src='https://opgg-static.akamaized.net/meta/images/lol/14.11.1/champion/Nidalee.png'/>
             </div>
             <div class="challenger">
-                <p>I</p>
+                <p>CHALLENGER</p>
             </div>
             <div class="playerlist">
-                <img class="players" src='../assets/img/KR.png'/>
-                <img class="players" src='https://www.mobafire.com/images/reforged-rune/First-Strike.png'/>
-                <img class="players" src='../assets/img/spell/Ignite.png'/>
+                <img class="players" src='../assets/img/EUW.png'/>
+                <img class="players" src='https://www.mobafire.com/images/reforged-rune/Dark-Harvest.png'/>
                 <img class="players" src='../assets/img/spell/Flash.png'/>
+                <img class="players" src='../assets/img/spell/Smite.png'/>
             </div>
             <div class="match">
-                <p class="mvp">BJ아이고</p>
+                <p class="mvp">TwTv Velja</p>
             </div>
             <hr class="line"/>
             <div class="bottom" style='display:flex'>
                 <p class="kdatext">KDA</p>
                 <p >
-                    <p class="kda">1 </p>
-                    <p class="kda"> 1 </p>
-                    <p class="kda"> 12</p>
+                    <p class="kda">12 </p>
+                    <p class="kda"> 5 </p>
+                    <p class="kda"> 9</p>
                 </p>
             </div>
         </div>
         <div class="patch">
             <p>14.11</p>
         </div>
-
+        <div class='banner'>
+            <span class='position'>JUG</span>
+            <span><img width='100px' src="./vs.png" /></span>
+            <span><img class="players1" src='https://opgg-static.akamaized.net/meta/images/lol/14.11.1/champion/Vi.png'/></span>
+        </div>
 
     </div>
 </body>

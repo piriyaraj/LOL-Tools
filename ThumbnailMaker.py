@@ -24,6 +24,7 @@ def change_champion_name(champion):
 
 def iconReplace(champion):
     name = champion.replace(" ","")
+    name = champion.replace("'","")
     if (name == "KaiSa"):
         return "Kaisa"
     elif (name == "VelKoz"):
@@ -75,7 +76,7 @@ class CreateThumbnail:
             return "lee-sin"
         elif (name == "RekSai"):
             return "rek-sai"
-        elif (name == "KSante"):
+        elif (name == "K'Sante"):
             return "k-sante"
         elif (name == "KogMaw"):
             return "Kog-maw"
@@ -91,28 +92,6 @@ class CreateThumbnail:
             return "nidalee"
         elif (name == "Evelynn"):
             return "evelynn"
-        else:
-            return name
-
-    def iconReplace(self, name):
-        if (name == "KaiSa"):
-            return "Kaisa"
-        elif (name == "VelKoz"):
-            return "Velkoz"
-        elif (name == "KhaZix"):
-            return "Khazix"
-        elif (name == "NunuWillump"):
-            return "Nunu"
-        elif (name == "BelVeth"):
-            return "Belveth"
-        elif (name == "RenataGlasc"):
-            return "Renata"
-        elif (name == "RekSai"):
-            return "RekSai"
-        elif (name == "Wukong"):
-            return "MonkeyKing"
-        elif (name == "Dr.Mundo"):
-            return "DrMundo"
         else:
             return name
 
@@ -133,31 +112,48 @@ class CreateThumbnail:
             skinUrl for skinUrl in skinsUrls if skinUrl is not None and "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/" in skinUrl]
         
         return filtered_urls
+    
     def all_champion(self):
         champions = []
+        kda = []
+        name = []
+        rank = []
+        spell = []
         for player in self.lol_data['team1']['players']:
             champions.append(player['champion'])
+            kda.append(player['kda'])
+            name.append(player['name'])
+            rank.append(player['rank'])
+            spell.append(player['spell'])
         for player in self.lol_data['team2']['players']:
             champions.append(player['champion'])
+            kda.append(player['kda'])
+            name.append(player['name'])
+            rank.append(player['rank'])
+            spell.append(player['spell'])
         
         for index, player in enumerate(champions):
             print(f"{index} : {player}")
         
-        return champions[int(input("Enter the players number:"))]
+        selection = int(input("Enter the players number:"))
+        positionLOL = ['TOP',"JUG","MID","ADC","SUP"][selection%5]
+        loserPosition = selection+5 if selection<5 else selection-5
+        loser = champions[loserPosition]
+        return champions[selection], positionLOL, loser ,kda[selection], name[selection], rank[selection], spell[selection]
+    
     def create_thumbnail(self):
-        champion = self.all_champion()
+        champion, positionLOL, loser, kda, name, rank, spell = self.all_champion()
         # exit()
         print_progress(5, 100, prefix='Creating Thumbnail:')
         # champion = self.lol_data['mvp']['champion']
         championRaw = champion
         champion = change_champion_name(champion)
-
+        
         championTemp = champion
         champion = self.exceptionHandle(champion)
         print_progress(8, 100, prefix='Creating Thumbnail:')
         # if champion=="KaiSa":
         #     champion=="Kaisa"
-        rank = self.lol_data['mvp']['rank']
         ranks = {
             "Iron": "https://lolg-cdn.porofessor.gg/img/s/league-icons-v3/160/1.png",
             "Bronze": "https://lolg-cdn.porofessor.gg/img/s/league-icons-v3/160/2.png",
@@ -176,12 +172,12 @@ class CreateThumbnail:
         spellImgs = os.listdir("assets/img/spell")
         print_progress(19, 100, prefix='Creating Thumbnail:')
         spellImg = random.sample(spellImgs, 3)
-        spellImgNew = self.lol_data['mvp']['spell']
+        spellImgNew = spell
         spellImgNew = [s+'.png' for s in spellImgNew]
         spellImg = spellImgNew
         print_progress(25, 100, prefix='Creating Thumbnail:')
 
-        loser = self.lol_data['loser']
+        # loser = self.lol_data['loser']
         imgUrl = ""
         count = 0
         # print(champion)
@@ -207,10 +203,10 @@ class CreateThumbnail:
         loserIcon = iconReplace(loser)
         # print(f"https://opgg-static.akamaized.net/meta/images/lol/14.11.1/champion/{loserIcon}.png'")
         self.__create_html(
-            kda=self.lol_data['mvp']['kda'].split("/"),
+            kda=kda.split("/"),
             imgUrl=imgUrl,
-            mvp=self.lol_data['mvp']['name'],
-            vs=self.lol_data['loser'],
+            mvp=name,
+            vs=loser,
             rank=rank.upper(),
             patch=self.lol_data['patch'],
             rankIcon=rankIcon,
@@ -218,6 +214,7 @@ class CreateThumbnail:
             opponentIcon=f'https://opgg-static.akamaized.net/meta/images/lol/14.11.1/champion/{oppIconImg}.png',
             region=region,
             loserIcon=f'https://opgg-static.akamaized.net/meta/images/lol/14.11.1/champion/{loserIcon}.png',
+            positionLOL = positionLOL
         )
         print_progress(50, 100, prefix='Creating Thumbnail:')
         html_path = os.path.abspath('assets/thumbnail.html')
@@ -240,7 +237,7 @@ class CreateThumbnail:
         self.driver.quit()
         return True
 
-    def __create_html(self, kda: str, mvp: str, vs: str, rank: str, patch: str, imgUrl: str, rankIcon: str, spellImg: list, opponentIcon: str, region, loserIcon):
+    def __create_html(self, kda: str, mvp: str, vs: str, rank: str, patch: str, imgUrl: str, rankIcon: str, spellImg: list, opponentIcon: str, region, loserIcon, positionLOL):
         none_vars = []
         if kda is None:
             none_vars.append('kda')
@@ -264,7 +261,9 @@ class CreateThumbnail:
         with open("./assets/template_new.html", "r", encoding='utf-8') as f:
             HTML = f.read()
             # print(HTML)
+        
         HTML = HTML.replace("backgroundImageLOL", imgUrl.replace("'", ""))
+        HTML = HTML.replace("positionLOL", positionLOL)
         HTML = HTML.replace("rankIconLOL", rankIcon)
         HTML = HTML.replace("loserIconLOL", loserIcon)
         HTML = HTML.replace("opponentIconLOL", opponentIcon)
@@ -301,7 +300,7 @@ def run():
     lol_data: MatchData = load()
     thumb_creator = CreateThumbnail(driver, data=lol_data)
     thumb_creator.create_thumbnail()
-    driver.quit()
+    # driver.quit()
     
 link_list = [
     # 'https://www.leagueofgraphs.com/match/na/5011563933',
