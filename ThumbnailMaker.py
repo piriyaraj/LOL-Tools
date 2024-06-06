@@ -3,7 +3,7 @@ from PIL import Image
 import os
 import random
 from time import sleep
-
+from datetime import datetime
 import requests
 from data_scrapper import DataScrapper
 from match_data import MatchData
@@ -50,7 +50,21 @@ class CreateThumbnail:
     def __init__(self, driver, data: MatchData) -> None:
         self.driver = driver
         self.lol_data = data
-        self.__thumb_path = os.path.abspath(r'../media/thumb/thumb.png')
+        current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
+        # Define the original file path
+        original_path = os.path.abspath(r'../media/thumb/thumb.png')
+
+        # Extract directory and file extension
+        directory = os.path.dirname(original_path)
+        file_extension = os.path.splitext(original_path)[1]
+
+        # Create the new file name with date and time
+        new_file_name = f'thumb_{current_datetime}{file_extension}'
+
+        # Construct the new file path
+        new_file_path = os.path.join(directory, new_file_name)
+        self.__thumb_path = new_file_path
+        
         os.makedirs('../media/thumb', exist_ok=True)
         # print_progress(1, 100, prefix='Creating Thumbnail:')
         self.skins = {
@@ -154,16 +168,18 @@ class CreateThumbnail:
         print_progress(8, 100, prefix='Creating Thumbnail:')
         # if champion=="KaiSa":
         #     champion=="Kaisa"
-        ranks = {
+
+        ranks= {
             "Iron": "https://lolg-cdn.porofessor.gg/img/s/league-icons-v3/160/1.png",
             "Bronze": "https://lolg-cdn.porofessor.gg/img/s/league-icons-v3/160/2.png",
             "Silver": "https://lolg-cdn.porofessor.gg/img/s/league-icons-v3/160/3.png",
             "Gold": "https://lolg-cdn.porofessor.gg/img/s/league-icons-v3/160/4.png",
             "Platinum": "https://lolg-cdn.porofessor.gg/img/s/league-icons-v3/160/5.png",
-            "Diamond": "https://lolg-cdn.porofessor.gg/img/s/league-icons-v3/160/6.png",
-            "Master": "https://lolg-cdn.porofessor.gg/img/s/league-icons-v3/160/7.png",
-            "GrandMaster": "https://lolg-cdn.porofessor.gg/img/s/league-icons-v3/160/8.png",
-            "Challenger": "https://lolg-cdn.porofessor.gg/img/s/league-icons-v3/160/9.png"
+            "Emerald": "https://lolg-cdn.porofessor.gg/img/s/league-icons-v3/160/6.png",
+            "Diamond": "https://lolg-cdn.porofessor.gg/img/s/league-icons-v3/160/7.png",
+            "Master": "https://lolg-cdn.porofessor.gg/img/s/league-icons-v3/160/8.png",
+            "GrandMaster": "https://lolg-cdn.porofessor.gg/img/s/league-icons-v3/160/9.png",
+            "Challenger": "https://lolg-cdn.porofessor.gg/img/s/league-icons-v3/160/10.png"
         }
         print_progress(12, 100, prefix='Creating Thumbnail:')
         rankIcon = ranks.get(rank)
