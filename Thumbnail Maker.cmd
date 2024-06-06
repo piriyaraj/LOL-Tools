@@ -8,7 +8,7 @@ if not exist LOL-Tools (
 )
 cd LOL-Tools
 
-call git restore .
+@REM call git restore .
 call git pull > NUL 2>&1
 
 if exist requirements.txt (
